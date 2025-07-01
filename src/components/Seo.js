@@ -12,9 +12,9 @@ export default function Seo({ title, description, ogImageUrl }) {
   return (
     <Head>
       <title>{title}</title>
-      <link rel="shortcut icon" href="/favicon-32x32.png" />
-      <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-      <link rel="icon" href="/favicon.ico" />
+      <link rel="shortcut icon" href="/nice-avatar.png" />
+      <link rel="apple-touch-icon" href="/nice-avatar.png" />
+      <link rel="icon" href="/nice-avatar.png" />
       <link rel="manifest" href="/manifest.json"></link>
       <meta name="theme-color" content="#292C33"></meta>
       <meta name="description" content={description} />
