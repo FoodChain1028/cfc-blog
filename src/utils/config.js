@@ -1,6 +1,13 @@
+const getBaseUrl = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return "https://foodchain.dev/blogs";
+  }
+  return "http://localhost:3000";
+};
+
 export const siteMetaData = {
   siteName: "Jeff Chung's Blog",
-  siteUrl: "https://foodchain.dev",
+  siteUrl: getBaseUrl(),
   authorName: "Jeff Chung",
   twitterUserName: "@zk_foodchain",
   githubUserName: "FoodChain1028",
