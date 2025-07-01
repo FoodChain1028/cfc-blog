@@ -5,7 +5,11 @@ import { getDatabase, getPage, getBlocks } from "./api/notion";
 import Link from "next/link";
 import { Text } from "../components/Text";
 import Seo from "../components/Seo";
+import CodeBlock from "../components/CodeBlock";
+import Tag from "../components/Tag";
+import { BlockMath } from 'react-katex';
 import { siteMetaData } from "../utils/config";
+import 'katex/dist/katex.min.css';
 
 const renderNestedList = (block) => {
   // Numbered lists not working\
@@ -35,19 +39,19 @@ const renderBlock = (block) => {
       );
     case "heading_1":
       return (
-        <h1>
+        <h1 className="mb-6">
           <Text text={value.rich_text} />
         </h1>
       );
     case "heading_2":
       return (
-        <h2>
+        <h2 className="mb-6">
           <Text text={value.rich_text} />
         </h2>
       );
     case "heading_3":
       return (
-        <h3>
+        <h3 className="mb-6">
           <Text text={value.rich_text} />
         </h3>
       );
@@ -92,17 +96,31 @@ const renderBlock = (block) => {
         </figure>
       );
     case "divider":
-      return <hr key={id} />;
+      return <hr key={id} className="my-8" />;
     case "quote":
-      return <blockquote key={id}>{value.rich_text[0].plain_text}</blockquote>;
-    case "code":
       return (
-        // overflow-x-scroll
-        <pre className="m-3 whitespace-pre-wrap rounded-md bg-cyan-900 p-4 text-white">
-          <code className="flex flex-wrap p-5" key={id}>
-            {value.rich_text[0].plain_text}
-          </code>
-        </pre>
+        <div key={id}>
+          <br />
+          <blockquote><Text text={value.rich_text} /></blockquote>
+          <br />
+        </div>
+      );
+    case "code":
+      const codeText = value.rich_text[0]?.plain_text || '';
+      const language = value.language || 'text';
+      return (
+        <CodeBlock
+          key={id}
+          code={codeText}
+          language={language}
+          backgroundColor="bg-zinc-800"
+        />
+      );
+    case "equation":
+      return (
+        <div key={id} className="my-8 flex justify-center">
+          <BlockMath math={value.expression} />
+        </div>
       );
     case "file":
       const src_file =
@@ -136,10 +154,30 @@ const renderBlock = (block) => {
           {href}
         </a>
       );
+    case "table":
+      return (
+        <div className="overflow-x-auto my-8">
+          <table className="min-w-full border-collapse border border-gray-300">
+            <tbody>
+              {value.children?.map((row, index) => (
+                <tr key={row.id || index}>
+                  {row.table_row?.cells?.map((cell, cellIndex) => (
+                    <td key={cellIndex} className="border border-gray-300 px-4 py-2 whitespace-nowrap">
+                      <Text text={cell} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    case "table_row":
+      // Table rows are handled within the table case above
+      return null;
     default:
-      return `❌ Unsupported block (${
-        type === "unsupported" ? "unsupported by Notion API" : type
-      })`;
+      return `❌ Unsupported block (${type === "unsupported" ? "unsupported by Notion API" : type
+        })`;
   }
 };
 
@@ -147,8 +185,11 @@ export default function Post({ page, blocks }) {
   if (!page || !blocks) {
     return <div />;
   }
-  let title = page.properties.Name.title[0].plain_text;
-  let description = page.properties.Summary.rich_text[0].plain_text;
+  let title = page.properties.title.title[0].plain_text;
+  // let description = page.properties.Summary.rich_text[0].plain_text;
+  let description = "123123";
+  const tags = page.properties.tags?.multi_select || [];
+
   return (
     <>
       <Seo
@@ -158,11 +199,24 @@ export default function Post({ page, blocks }) {
         )}`}
         description={description}
       />
-      <div className="mx-auto my-5 max-w-3xl content-center px-3">
+      <div className="mx-auto my-5 max-w-5xl content-center px-3">
         <article className="container">
           <h1 className="edit">
-            <Text text={page.properties.Name.title} />
+            <Text text={page.properties.title.title} />
           </h1>
+          {tags.length > 0 && (
+            <div className="mb-6">
+              <div className="flex flex-wrap">
+                {tags.map((tag, index) => (
+                  <Tag
+                    key={index}
+                    name={tag.name}
+                    color={tag.color}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
           <section className="font-merriweather text-base font-normal">
             {blocks.map((block) => (
               <Fragment key={block.id}>{renderBlock(block)}</Fragment>

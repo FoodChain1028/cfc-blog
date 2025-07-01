@@ -12,7 +12,7 @@ function Bio() {
         alt={`${siteMetaData.authorName}`}
       />
       <p className=" max-w-xs p-0.5 text-base text-text sm:p-2">
-        Personal blog by{" "}
+        I'm {" "}
         <a
           href={`https://twitter.com/${siteMetaData.twitterUserName}`}
           target="_blank"
@@ -21,7 +21,8 @@ function Bio() {
         >
           {`${siteMetaData.authorName}`}
         </a>
-        . I explain tech stuff and share my thoughts.
+        .
+        <br />Independent Developer. Building things.
       </p>
     </div>
   );

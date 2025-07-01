@@ -64,3 +64,31 @@ h6 {
 .container figcaption {
   @apply mb-0 mt-0 text-center text-sm opacity-80;
 }
+
+/* Mermaid diagram styles */
+.mermaid-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-container .node rect,
+.mermaid-container .node circle,
+.mermaid-container .node ellipse,
+.mermaid-container .node polygon {
+  fill: #374151 !important;
+  stroke: #9ca3af !important;
+}
+
+.mermaid-container .edgePath .path {
+  stroke: #9ca3af !important;
+}
+
+.mermaid-container .edgeLabel {
+  background-color: #1f2937 !important;
+  color: #f3f4f6 !important;
+}
+
+.mermaid-container text {
+  fill: #f3f4f6 !important;
+  font-family: 'Montserrat', sans-serif !important;
+}

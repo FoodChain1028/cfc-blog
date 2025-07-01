@@ -6,7 +6,7 @@ function Layout({ children }) {
   return (
     <>
       <Seo />
-      <div className="mx-auto max-w-2xl bg-primary px-5 py-10">
+      <div className="mx-auto max-w-4xl bg-primary px-5 py-10">
         <Header />
         <aside className="block">
           <Bio />

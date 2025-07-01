@@ -1,4 +1,6 @@
 import React from "react";
+import { InlineMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 
 export const Text = ({ text }) => {
   if (!text) {
@@ -6,34 +8,58 @@ export const Text = ({ text }) => {
   }
 
   let content = text.reduce((acc, value) => {
-    const {
-      annotations: { bold, code, italic, strikethrough, underline },
-      text,
-    } = value;
-    let el = text.link ? (
-      <a key={value.plain_text} href={text.link.url}>
-        {text.content}
+    // Handle missing or malformed value structure
+    if (!value || typeof value !== 'object') {
+      return acc;
+    }
+
+    // Handle equation type (inline LaTeX)
+    if (value.type === 'equation') {
+      const equation = value.equation?.expression || '';
+      acc.push(
+        <React.Fragment key={`equation-${equation}`}>
+          <InlineMath math={equation} />
+        </React.Fragment>
+      );
+      return acc;
+    }
+
+    const annotations = value.annotations || {};
+    const { bold, code, italic, strikethrough, underline } = annotations;
+    const textContent = value.text || {};
+    const plainText = value.plain_text || '';
+
+    let el = textContent.link ? (
+      <a key={plainText} href={textContent.link.url}>
+        {plainText}
       </a>
     ) : (
-      text.content
+      plainText
     );
     if (bold) {
-      el = <strong key={`bold-${value.plain_text}`}>{el}</strong>;
+      el = <strong key={`bold-${plainText}`}>{el}</strong>;
     }
     if (italic) {
-      el = <em key={`italic-${value.plain_text}`}>{el}</em>;
+      el = <em key={`italic-${plainText}`}>{el}</em>;
     }
     if (underline) {
-      el = <u key={`underline-${value.plain_text}`}>{el}</u>;
+      el = <u key={`underline-${plainText}`}>{el}</u>;
     }
     if (strikethrough) {
-      el = <del key={`strikethrough-${value.plain_text}`}>{el}</del>;
+      el = <del key={`strikethrough-${plainText}`}>{el}</del>;
     }
     if (code) {
-      el = <code key={`code-${value.plain_text}`}>{el}</code>;
+      el = (
+        <code
+          key={`code-${plainText}`}
+          className="bg-zinc-800 text-cyan-300 px-1.5 py-0.5 rounded text-sm font-mono"
+        >
+          {el}
+        </code>
+      );
     }
     acc.push(
-      <React.Fragment key={`fragment-${value.plain_text}`}>{el}</React.Fragment>
+      <React.Fragment key={`fragment-${plainText}`}>{el}</React.Fragment>
     );
     return acc;
   }, []);
