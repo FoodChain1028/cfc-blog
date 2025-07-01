@@ -8,8 +8,6 @@ const withPWA = require("next-pwa")({
 module.exports = withPWA({
   // next.js config
   reactStrictMode: true,
-  basePath: process.env.NODE_ENV === 'production' ? '/blogs' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/blogs' : '',
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
