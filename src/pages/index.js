@@ -133,5 +133,6 @@ export const getStaticProps = async () => {
     props: {
       posts: database,
     },
+    revalidate: 60, // update every 60 seconds.
   };
 };
